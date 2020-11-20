@@ -1,19 +1,21 @@
 ---
 title: "First ML model"
 ---
+
+## Training Data
+
+|Input:|-1.0|0.0|1.0|2.0|3.0|4.0|
+|Output:|-2.0|0.0|2.0|4.0|6.0|8.0|
+
 <html>
     <body>
-        <h2>Training Data</h2>
-        <p>Input: &nbsp; [-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]</p>
-        <p>Output: [-2.0, 0.0, 2.0, 4.0, 6.0, 8.0]</p>
-        <!-- Take epochs from user and give train button -->
-        <label for="epochs_input">Epochs to train the model:</label>
-        <input type="number" id="epochs_input" name="epochs_input" min="1" width="20px">
+        <span>Epochs to train the model:</span><input type="number" id="epochs_input" min="1"
+        value="1" style="width: 4em;">
         <button type="button" id="train_button" onclick="trainModel()">Train Model</button><br>
         <p id="message">Untrained Model</p>
         <!-- take user input and test model -->
-        <label for="test_input">Number to test the model:</label>
-        <input type="number" id="test_input" name="test">
+        <span>Number to test the model:</span><input type="number" id="test_input"
+        value="2" style="width: 4em;">
         <button type="button" id="test_button" onclick="testModel()">Test Model</button>
         <br>
         <p id="result">Model Prediction: </p>
@@ -41,7 +43,6 @@ title: "First ML model"
         model.add(tf.layers.dense({units: 1, inputShape: [1]}));
         model.compile({loss:'meanSquaredError', 
                        optimizer:'sgd'});
-
         /*
         function to train the model with given set of inputs and outputs for number of epochs
         as specified and a callback to show loss after each epoch in the console
@@ -55,8 +56,7 @@ title: "First ML model"
                                   console.log("Epoch:" 
                                               + epoch 
                                               + " Loss:" 
-                                              + logs.loss);
-                                  
+                                              + logs.loss);                         
                               }
                           }
                         });
@@ -73,7 +73,6 @@ title: "First ML model"
             train_msg.innerHTML = 'Model Trained!! Now test the model';
         });
         }        
-        
         // function to test the model
         function testModel() {
             // Get the user input value and convert it to number
