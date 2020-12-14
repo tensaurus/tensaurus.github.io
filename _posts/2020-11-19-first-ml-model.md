@@ -1,5 +1,6 @@
 ---
 title: "First ML model"
+author_profile: false
 ---
 
 ## Training Data
