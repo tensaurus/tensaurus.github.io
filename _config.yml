@@ -99,7 +99,7 @@ defaults:
     values:
       layout: single
       author_profile: true
-      read_time: true
+      read_time: false
       comments: true
       share: true
       related: true
@@ -120,3 +120,8 @@ tag_archive:
 
 # for doing away with github metadata warning
 github: [metadata]
+# define comments provider
+comments:
+  provider: "disqus"
+  disqus:
+    shortname: "tensaurus"
