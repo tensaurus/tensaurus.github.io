@@ -125,3 +125,9 @@ comments:
   provider: "disqus"
   disqus:
     shortname: "tensaurus"
+# add google analytics
+analytics:
+  provider: "google-gtag"
+  google:
+    tracking_id: "G-P7KR37J80X"
+    anonymize_ip: false # default
