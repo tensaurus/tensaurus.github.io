@@ -5,6 +5,7 @@
         let numOfFeatures;
         let convertedTrainingData;
         let convertedTestingData;
+        const model = tf.sequential();
         function prepareData(){
             let repeat = true;
             const trainingUrl = '/assets/csv/penguins_train.csv';
@@ -89,7 +90,6 @@
                 }
         async function trainModel(){
             // Math.seedrandom(3);
-            const model = tf.sequential();
             model.add(tf.layers.dense({inputShape: [numOfFeatures], activation: "relu", units: 16}));
             model.add(tf.layers.dense({activation: "relu", units: 16}))
             model.add(tf.layers.dense({activation: "relu", units: 8}))
@@ -104,6 +104,9 @@
                                   new tf.CustomCallback({
                                     onEpochEnd: async(epoch, logs) =>{
                                         // acc = logs.acc;
+                                        const bar = document.getElementById("myBar");
+                                        bar.style.width = epoch*100/numOfEpochs + 1 + "%";
+                                        bar.innerHTML = epoch;
                                         if (epoch == numOfEpochs - 1) {
                                             console.log("Epoch: " + epoch 
                                                   + " Loss: " + logs.loss.toFixed(4) 
@@ -122,25 +125,6 @@
                                     }),
                                 // tf.callbacks.earlyStopping({monitor: 'acc', patience: 20})
                             ]});
-            // Test Cases:
-            
-            // Adelie
-            // const testVal = tf.tensor2d([41, 21], [1, 2]);
-
-            // Chinstrap
-            // const testVal = tf.tensor2d([50.8, 19], [1, 2]);
-
-            // Gentoo
-            const testVal = tf.tensor2d([45, 14], [1, 2]);
-                   
-            
-            const prediction = model.predict(testVal);
-            const pIndex = tf.argMax(prediction, axis=1).dataSync();
-            
-            const classNames = ["Adelie", "Chinstrap", "Gentoo"];
-            
-            // alert(prediction)
-            alert(classNames[pIndex])
             // return repeat;
         }
         // Run the function run after the page is loaded.
@@ -161,9 +145,48 @@
         //         await trainModel();
         //     }
         // })();
-        trainModel();
+        // trainModel();
+        function train() {
+            // user_epochs = Number(document.getElementById("epochs_input").value);
+            const test_btn = document.getElementById("test_button");
+            const train_btn = document.getElementById("train_button");
+            const train_msg = document.getElementById("message");
+            test_btn.disabled = true;
+            train_btn.disabled = true;
+            train_msg.innerHTML = 'Hold on!! Model training';
+            trainModel().then(() => {
+                test_btn.disabled = false;
+                train_btn.disabled = false;
+                train_msg.innerHTML = 'Model Trained!! Now test the model';
+            });
+        }
+        function testModel() {
+            // Get the user input value and convert it to number
+            const input_1 = Number(document.getElementById("cul_len").value);
+            const input_2 = Number(document.getElementById("cul_dep").value);
+            // const flip_len = Number(document.getElementById("input_3").value);
+            // const bod_mas = Number(document.getElementById("input_4").value);
+            // Get prediction from the model for user given input. Model prediction
+            // is a Tensor
+            const prediction = model.predict(tf.tensor2d([input_1, input_2], [1,2]));
+            const pIndex = tf.argMax(prediction, axis=1).dataSync();
+            const classNames = ["Adelie", "Chinstrap", "Gentoo"];
+            // alert(prediction)
+            alert(classNames[pIndex])
+            // Get the numerical value from the tensor using dataSync() and round it
+            // document.getElementById("result").innerHTML = 'Model Prediction: ' + output_number;
+        }
         </script>
 <body>
     <!-- <h1>Simple Tabular Classifier: Iris Flower</h1> -->
+    <div id="myProgress" style="width: 100%; background-color: #ddd;">
+        <div id="myBar" style="width: 1%; height: 30px; background-color: #4CAF50; text-align: center; ;line-height: 32px; color: black;">
+        </div>
+    </div>
+    <p id="message">Untrained Model</p>
+    <button type="button" id="train_button" onclick="train()">Train Model</button><br>
+    <span>Culmen Length:</span><input type="number" id="cul_len" style="width: 4em;"><br>
+    <span>Culmen Depth:</span><input type="number" id="cul_dep" style="width: 4em;"><br>
+    <button type="button" id="test_button" onclick="testModel()">Test Model</button><br>
 </body>
 </html>
