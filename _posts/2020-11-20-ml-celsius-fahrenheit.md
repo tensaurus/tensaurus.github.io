@@ -1,7 +1,6 @@
 ---
 title: "Second ML model"
 ---
-
 ## Training Data
 
 |Fahrenheit:|86.0|95.0|98.6|100.4|104.0|113.0|
@@ -87,3 +86,5 @@ title: "Second ML model"
         }
     </script>
 </html>
+
+Enter any temperature in degrees Fahrenheit and click "Test Model" button. You probably won't get the expected output, temperature in degrees Celsius. 
