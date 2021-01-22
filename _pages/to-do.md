@@ -6,5 +6,5 @@ permalink: /to-do/
 
 - [ ] Code description in First ML model
 - [ ] UI usage for celsius fahrenheit
-- [ ] Github gist in posts
-- [ ] Separate prose and code
+- [x] Github gist in posts
+- [X] Separate prose and code
