@@ -1,5 +1,5 @@
 ---
-title: "First Machine Learning model"
+title: "First Machine Learning Model"
 author_profile: false
 ---
 <html>
@@ -97,17 +97,17 @@ What's happening here? We have a set of inputs and corresponding outputs. You ca
 
 We did not give the computer the straight forward formula for relationship between input and ouput. Rather, the computer is given set of inputs and known outputs. It is programmed to find the relationship between them by a **Machine Learning** technique called *Stochastic Gradient Descent*
 
-### What is **Machine Learning** ?
+## What is **Machine Learning** ?
 
 Untill lately humans figured out the relation between inputs and outputs. We gave inputs and a mathematical function to computing machines. Then those machines gave outputs based on that information. This is what programming a computer meant.
 
 Machine learning is a different approach to programming. In it computers are coded to figure out the relationship between the known set of inputs and outputs. Then we can ask the computer to give us the result of an input for which output is not known.
 
-### What is a *Model* ?
+## What is a *Model* ?
 
 In very simple terms a *Model* is a function which relates inputs to ouputs. We give it inputs and it gives ouputs.
 
-### What is meant by *Training a Model* ?
+## What is meant by *Training a Model* ?
 
 A machine learning *Model* has a number of variable parameters called *weights*. Initially weights can have any value. To get the values of weights such that model can *predict* the best possible ouput for a given input, the model is trained. Training a model is iteratively updating its weights based on the difference between outputs computed by the model and the desired outputs for the given inputs.
 
