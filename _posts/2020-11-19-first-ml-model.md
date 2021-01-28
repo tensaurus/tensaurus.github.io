@@ -1,6 +1,6 @@
 ---
 title: "First Machine Learning Model"
-author_profile: false
+# author_profile: false
 ---
 {% include_relative  html/first-ml-model.html %}
 
