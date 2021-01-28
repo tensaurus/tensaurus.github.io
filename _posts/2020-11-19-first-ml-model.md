@@ -31,7 +31,7 @@ In very simple terms a *Model* is a function which relates inputs to ouputs. We 
 
 ## What is meant by *Training a Model* ?
 
-A machine learning *Model* has a number of variable parameters called *weights*. Initially weights can have any value. To get the values of weights such that model can *predict* the best possible ouput for a given input, the model is trained. Training a model is iteratively updating its weights based on the difference between outputs computed by the model and the desired outputs for the given inputs.
+A machine learning *Model* has a number of variable parameters called *weights*. Initially weights can have any value. To get the values of weights such that model can *predict* the best possible ouput for a given input, the model is trained. Training a model is iteratively updating its weights based on the difference between outputs computed by the model and the desired outputs for the given inputs. The difference between computed outputs and desired outputs is quantified as `loss`. There are different ways to calculate loss and update weights.
 
 The model is trained till we get satifactory accuracy.When the model is trained, we can use it to predict results for inputs for which outputs are not known.
 

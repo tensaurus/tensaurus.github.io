@@ -8,3 +8,4 @@ permalink: /to-do/
 - [ ] UI usage for celsius fahrenheit
 - [x] Github gist in posts
 - [X] Separate prose and code
+- [ ] How to make progress bar for model training
