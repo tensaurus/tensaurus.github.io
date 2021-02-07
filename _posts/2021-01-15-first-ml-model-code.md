@@ -109,7 +109,7 @@ async function doTraining(model){
                 });
 }
 ```
-`model.fit` takes the training data in `x` (inputs) and `y` (outputs), trains the model for `epochs: user_epochs` and at the end of each epoch prints epoch and loss in console using callback `onEpochEnd`. Callbacks are handy in getting information and triggering some action for different milestones during model training.
+`model.fit` takes the training data in `x` (inputs) and `y` (outputs), trains the model for `epochs: user_epochs` and at the end of each epoch prints epoch number and loss in console using callback `onEpochEnd`. Callbacks are handy in getting information and triggering some action for different milestones during model training. In browser js console you can see loss decreasing after each epoch as training goes on.
 
 ```js
 function trainModel() {
