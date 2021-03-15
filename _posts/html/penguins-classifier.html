@@ -1,0 +1,207 @@
+<html>
+
+<head></head>
+
+<body>
+    <p id="message">Hold on!! Model is Training</p>
+    <!-- Model training progress bar -->
+    <div id="myProgress" style="width: 100%; background-color: #ddd;">
+        <div id="myBar" style="width: 1%; height: 30px; background-color: #4CAF50;
+        text-align: center; ;line-height: 32px; color: black;">
+        </div>
+    </div>
+    <div>
+        <span>Bill Length (mm): </span><input type="number" id="bill-length" value="40"
+            style="width: 4em;border: black;border-style: solid;"><br>
+        <span>Bill Depth (mm): </span><input type="number" id="bill-depth" value="20"
+            style="width: 4em;border: black;border-style: solid;"><br>
+        <span>Flipper Length (mm): </span><input type="number" id="flipper-length" value="200"
+            style="width: 4em;border: black;border-style: solid;"><br>
+    </div>
+    <button type="button" id="test_button" onclick="testModel()" disabled>Test Model</button><br><br>
+    <span id="result">Penguin Species: </span>
+    <div style="width:800px;">
+        <div id="fit" style="width: 300px; float:left;"></div>
+        <div id="fit1" style="width: 300px; float:left;"></div>
+        <div id="plot" style="width: 300px; float:left;"></div>
+        <div id="plot1" style="width: 300px; float:left;"></div>
+        <div style="clear: both;"></div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@latest/dist/tfjs-vis.umd.min.js"></script>
+<script lang="js">
+    // Penguins data source (credit: https://allisonhorst.github.io/palmerpenguins/)
+    // Penguins csv data source (credit: https://github.com/mwaskom/seaborn-data/blob/master/penguins.csv)
+    const penguinsgUrl = 'https://raw.githubusercontent.com/mwaskom/seaborn-data/master/penguins.csv';
+    const penguinsCSVData = tf.data.csv(penguinsgUrl, { mode: "no-cors" });
+    let model;
+    let numOfEpochs = 20;
+    let inputMax;
+    let inputMin;
+    let msg = document.getElementById("message");
+    const classNames = ["Adelie", "Chinstrap", "Gentoo"];
+    async function run() {
+        // convert csv data to array
+        const penguinsArrayData = await penguinsCSVData.toArray();
+        // Take only those entries where all features have a not null value
+        // filter out the entry if any of the features doesn't have a value
+        const penguins = penguinsArrayData.filter(p => Object.values(p).every(e => e != null));
+        // Data keys
+        // console.log(Object.keys(penguins[0]));
+        // ["species", "island", "bill_length_mm", "bill_depth_mm", "flipper_length_mm",
+        // "body_mass_g", "sex"]
+        // Plot Bill Length vs Bill Depth
+        // map function for bill length and bill depth
+        const billLengthVSBillDepth = (p) => ({ x: p.bill_length_mm, y: p.bill_depth_mm });
+        const adelie = penguins.filter(p => p.species == "Adelie").map(billLengthVSBillDepth);
+        const chinstrap = penguins.filter(p => p.species == "Chinstrap").map(billLengthVSBillDepth);
+        const gentoo = penguins.filter(p => p.species == "Gentoo").map(billLengthVSBillDepth);
+        const plotElement = document.getElementById("plot");
+        tfvis.render.scatterplot(
+            plotElement,
+            { values: [adelie, chinstrap, gentoo], series: ['Adelie', 'Chinstrap', 'Gentoo'] },
+            {
+                xAxisDomain: [30, 60],
+                yAxisDomain: [10, 30],
+                xLabel: 'Bill Length',
+                yLabel: 'Bill Depth',
+            }
+        );
+        // Plot Bill Length vs Flipper Length
+        const billLengthVSFlipperLength = (p) => ({ x: p.bill_length_mm, y: p.flipper_length_mm });
+        const adelie1 = penguins.filter(p => p.species == "Adelie").map(billLengthVSFlipperLength);
+        const chinstrap1 = penguins.filter(p => p.species == "Chinstrap").map(billLengthVSFlipperLength);
+        const gentoo1 = penguins.filter(p => p.species == "Gentoo").map(billLengthVSFlipperLength);
+        const plotElement1 = document.getElementById("plot1");
+        tfvis.render.scatterplot(
+            plotElement1,
+            { values: [adelie1, chinstrap1, gentoo1], series: ['Adelie', 'Chinstrap', 'Gentoo'] },
+            {
+                xAxisDomain: [30, 60],
+                yAxisDomain: [150, 250],
+                xLabel: 'Bill Length',
+                yLabel: 'Flipper Length'
+            }
+        );
+        // split penguins data in train & validation sets
+        // shuffle penguins array using  Fisher-Yates shuffle
+        // (https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle).
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        // make a copy of penguins
+        const penguinsShuffle = penguins.slice(0);
+        // shuffle it in-place
+        shuffle(penguinsShuffle);
+        // split penguins data in train & validation sets (70:30)
+        // Training Data
+        const penguinsTrain = penguinsShuffle.slice(0, Math.floor(0.7 * penguinsShuffle.length));
+        const penguinsValid = penguinsShuffle.slice(Math.floor(0.7 * penguinsShuffle.length));
+        const inputsTrain = penguinsTrain.map(p => ([
+            p.bill_length_mm,
+            p.bill_depth_mm,
+            p.flipper_length_mm,
+            // p.body_mass_g,
+            // p.sex == 'MALE' ? 1 : 0
+        ]));
+        const labelsTrain = penguinsTrain.map(p => ([
+            p.species == 'Adelie' ? 1 : 0,
+            p.species == 'Chinstrap' ? 1 : 0,
+            p.species == 'Gentoo' ? 1 : 0
+        ]));
+        const numOfFeatures = inputsTrain[0].length;
+        // convert arrays to tensors for tfjs
+        const inputTensorTrain = tf.tensor2d(inputsTrain, [inputsTrain.length, numOfFeatures]);
+        const labelTensorTrain = tf.tensor2d(labelsTrain, [labelsTrain.length, 3]);
+        // normalize training data
+        inputMax = inputTensorTrain.max(0);
+        inputMin = inputTensorTrain.min(0);
+        const normalizedInputsTrain = inputTensorTrain.sub(inputMin).div(inputMax.sub(inputMin));
+        // Validation Data
+        const inputsValid = penguinsValid.map(p => ([
+            p.bill_length_mm,
+            p.bill_depth_mm,
+            p.flipper_length_mm,
+            // p.body_mass_g,
+            // p.sex == 'MALE' ? 1 : 0
+        ]));
+        const labelsValid = penguinsValid.map(p => ([
+            p.species == 'Adelie' ? 1 : 0,
+            p.species == 'Chinstrap' ? 1 : 0,
+            p.species == 'Gentoo' ? 1 : 0
+        ]));
+        // convert arrays to tensors for tfjs
+        const inputTensorValid = tf.tensor2d(inputsValid, [inputsValid.length, numOfFeatures]);
+        const labelTensorValid = tf.tensor2d(labelsValid, [labelsValid.length, 3]);
+        // normalize validation data
+        const normalizedInputsValid = inputTensorValid.sub(inputMin).div(inputMax.sub(inputMin));
+        // Define model
+        model = tf.sequential();
+        model.add(tf.layers.dense({ inputShape: [numOfFeatures], units: 3 }));
+        model.add(tf.layers.dense({ activation: "softmax", units: 3 }));
+        model.compile({
+            loss: "categoricalCrossentropy",
+            optimizer: tf.train.adam(0.05),
+            metrics: ['acc']
+        });
+        // HTML elements to visualize training progress
+        const fitElement = document.getElementById("fit");
+        const fitElement1 = document.getElementById("fit1");
+        await model.fit(normalizedInputsTrain, labelTensorTrain, {
+            batchSize: 32,
+            epochs: numOfEpochs,
+            shuffle: true,
+            validationData: [normalizedInputsValid, labelTensorValid],
+            callbacks: [tfvis.show.fitCallbacks(
+                fitElement,
+                ['loss', 'acc'],
+                {height: 200, seriesColors: ["BlueViolet"], callbacks: ['onEpochEnd'] }
+            ),
+            tfvis.show.fitCallbacks(
+                fitElement1,
+                ['val_loss', 'val_acc'],
+                {height: 200, seriesColors: ["GreenYellow"], callbacks: ['onEpochEnd'] }
+            ),
+            {
+                onEpochEnd: async (epoch, logs) => {
+                    const bar = document.getElementById("myBar");
+                    bar.style.width = (epoch + 1) * 100 / numOfEpochs + "%";
+                    bar.innerHTML = epoch + 1;
+                    console.log("Epoch: " + epoch
+                        + " Loss: " + logs.loss.toFixed(4)
+                        + " Accuracy: " + logs.acc.toFixed(4)
+                        + " Val Loss: " + logs.val_loss.toFixed(4)
+                        + " Val Accuracy: " + logs.val_acc.toFixed(4));
+                }
+            }]
+        });
+        // const testInputTensor = tf.tensor2d([45.2,16.6,191.0], [1, numOfFeatures]);
+        // const normalizedTestInput = testInputTensor.sub(inputMin).div(inputMax.sub(inputMin));
+        // const output = model.predict(normalizedTestInput);
+        // const pIndex = tf.argMax(output, axis=1).dataSync();
+        // const classNames = ["Adelie", "Chinstrap", "Gentoo"];
+        // alert(classNames[pIndex])
+    }
+    function testModel() {
+        // Get the user input value and convert it to number
+        const input_1 = Number(document.getElementById("bill-length").value);
+        const input_2 = Number(document.getElementById("bill-depth").value);
+        const input_3 = Number(document.getElementById("flipper-length").value);
+        const testInputTensor = tf.tensor2d([input_1, input_2, input_3], [1, 3]);
+        const normalizedTestInput = testInputTensor.sub(inputMin).div(inputMax.sub(inputMin));
+        const prediction = model.predict(normalizedTestInput);
+        const pIndex = tf.argMax(prediction, axis = 1).dataSync();
+        const penguin_result = classNames[pIndex];
+        document.getElementById("result").innerHTML = 'Penguin Species: ' + penguin_result;
+    }
+    window.onload = run().then(() => {
+        msg.innerHTML = "Model is Trained!!, you can test it now";
+        document.getElementById("test_button").disabled = false;
+    });
+</script>
+
+</html>
