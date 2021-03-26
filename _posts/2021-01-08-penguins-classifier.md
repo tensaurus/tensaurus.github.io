@@ -1,6 +1,6 @@
 ---
-title: "Penguins Classifier"
-excerpt: ""
+title: "Penguins Species Classifier using Deep Learning in Tensorflow.js"
+excerpt: "Penguins species classifier HTML app for Palmer Penguins data using neural network deep learning in Tensorflow.js. Import csv data, convert it to tensors, normalize and train a neural network on it"
 ---
 ## Penguins Classifier App
 {% include_relative html/penguins-classifier.html %}

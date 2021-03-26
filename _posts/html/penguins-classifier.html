@@ -18,7 +18,7 @@
         <span>Flipper Length (mm): </span><input type="number" id="flipper-length" value="200"
             style="width: 4em;border: black;border-style: solid;"><br>
     </div>
-    <button type="button" id="test_button" onclick="testModel()" disabled>Test Model</button><br><br>
+    <button type="button" id="test_button" onclick="testModel()" disabled>Classify Penguin</button><br><br>
     <span id="result">Penguin Species: </span>
     <div style="width:800px;">
         <div id="fit" style="width: 300px; float:left;"></div>
@@ -34,6 +34,7 @@
     // Penguins data source (credit: https://allisonhorst.github.io/palmerpenguins/)
     // Penguins csv data source (credit: https://github.com/mwaskom/seaborn-data/blob/master/penguins.csv)
     const penguinsgUrl = 'https://raw.githubusercontent.com/mwaskom/seaborn-data/master/penguins.csv';
+    // create CSV dataset from the csv file
     const penguinsCSVData = tf.data.csv(penguinsgUrl, { mode: "no-cors" });
     let model;
     let numOfEpochs = 20;
@@ -62,8 +63,7 @@
             plotElement,
             { values: [adelie, chinstrap, gentoo], series: ['Adelie', 'Chinstrap', 'Gentoo'] },
             {
-                xAxisDomain: [30, 60],
-                yAxisDomain: [10, 30],
+                zoomToFit: true,
                 xLabel: 'Bill Length',
                 yLabel: 'Bill Depth',
             }
@@ -78,8 +78,7 @@
             plotElement1,
             { values: [adelie1, chinstrap1, gentoo1], series: ['Adelie', 'Chinstrap', 'Gentoo'] },
             {
-                xAxisDomain: [30, 60],
-                yAxisDomain: [150, 250],
+                zoomToFit: true,
                 xLabel: 'Bill Length',
                 yLabel: 'Flipper Length'
             }
@@ -101,6 +100,7 @@
         // Training Data
         const penguinsTrain = penguinsShuffle.slice(0, Math.floor(0.7 * penguinsShuffle.length));
         const penguinsValid = penguinsShuffle.slice(Math.floor(0.7 * penguinsShuffle.length));
+        // Training inputs or features
         const inputsTrain = penguinsTrain.map(p => ([
             p.bill_length_mm,
             p.bill_depth_mm,
@@ -108,6 +108,7 @@
             // p.body_mass_g,
             // p.sex == 'MALE' ? 1 : 0
         ]));
+        // Training outputs or labels
         const labelsTrain = penguinsTrain.map(p => ([
             p.species == 'Adelie' ? 1 : 0,
             p.species == 'Chinstrap' ? 1 : 0,
@@ -179,12 +180,6 @@
                 }
             }]
         });
-        // const testInputTensor = tf.tensor2d([45.2,16.6,191.0], [1, numOfFeatures]);
-        // const normalizedTestInput = testInputTensor.sub(inputMin).div(inputMax.sub(inputMin));
-        // const output = model.predict(normalizedTestInput);
-        // const pIndex = tf.argMax(output, axis=1).dataSync();
-        // const classNames = ["Adelie", "Chinstrap", "Gentoo"];
-        // alert(classNames[pIndex])
     }
     function testModel() {
         // Get the user input value and convert it to number
@@ -199,7 +194,7 @@
         document.getElementById("result").innerHTML = 'Penguin Species: ' + penguin_result;
     }
     window.onload = run().then(() => {
-        msg.innerHTML = "Model is Trained!!, you can test it now";
+        msg.innerHTML = "Model is Trained!!, classify penguins now";
         document.getElementById("test_button").disabled = false;
     });
 </script>

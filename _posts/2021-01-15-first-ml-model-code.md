@@ -59,7 +59,7 @@ The first argument in `tf.tensor2d()` `[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]` is the a
 
 ### Define the Model
 
-Know we will construct the model in tensorflow.js. To fit this simple data a *sequential* neural network is used as our machine learning model. In a sequential neural network model the input data passes from one layer to another in the sequence as defined while constructing the model.
+Now we will construct the model in tensorflow.js. To fit this simple data a *sequential* neural network is used as our machine learning model. In a sequential neural network model the input data passes from one layer to another in the sequence as defined while constructing the model.
 
 Model is initialized with `tf.sequential()`,
 

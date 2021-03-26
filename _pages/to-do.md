@@ -5,6 +5,7 @@ permalink: /to-do/
 ### Tasks
 
 - [ ] Penguins Classifier
+    - [ ] App with saved trained model
     - [x] Data preparation
     - [x] Correlation
     - [x] Train-valid split
@@ -17,6 +18,8 @@ permalink: /to-do/
     - [x] convert csv data to array
 # Post Ideas
 - [ ] How to make progress bar for model training
+- [ ] How to make penguins species classifier in browser
+- [ ] General ML solution for tabular classification task
 # Improvements
 - [ ] Separate script from html
 - [ ] celsius-fahrenheight increase layers/units
